@@ -138,6 +138,33 @@ public class GeneratorFactory {
     }
   }
 
+  static class RemovePunctGeneratorFactory implements XmlFeatureGeneratorFactory {
+
+    public AdaptiveFeatureGenerator create(Element generatorElement,
+                                           FeatureGeneratorResourceProvider resourceManager)
+        throws InvalidFormatException {
+
+      Collection<AdaptiveFeatureGenerator> aggregatedGenerators = new LinkedList<>();
+
+      NodeList childNodes = generatorElement.getChildNodes();
+
+      for (int i = 0; i < childNodes.getLength(); i++) {
+        Node childNode = childNodes.item(i);
+        if (childNode instanceof Element) {
+          Element aggregatedGeneratorElement = (Element) childNode;
+          aggregatedGenerators.add(
+              GeneratorFactory.createGenerator(aggregatedGeneratorElement, resourceManager));
+        }
+      }
+
+      return new RemovePunctFeatureGenerator(aggregatedGenerators.toArray(
+          new AdaptiveFeatureGenerator[aggregatedGenerators.size()]));
+    }
+
+    static void register(Map<String, XmlFeatureGeneratorFactory> factoryMap) {
+      factoryMap.put("removePunct", new RemovePunctGeneratorFactory());
+    }
+  }
   /**
    * @see CachedFeatureGenerator
    */
@@ -461,6 +488,7 @@ public class GeneratorFactory {
     }
   }
 
+
   static class BigramNameFeatureGeneratorFactory implements XmlFeatureGeneratorFactory {
 
     public AdaptiveFeatureGenerator create(Element generatorElement,
@@ -658,6 +686,7 @@ public class GeneratorFactory {
 
   static {
     AggregatedFeatureGeneratorFactory.register(factories);
+    RemovePunctGeneratorFactory.register(factories);
     CachedFeatureGeneratorFactory.register(factories);
     CharacterNgramFeatureGeneratorFactory.register(factories);
     DefinitionFeatureGeneratorFactory.register(factories);
