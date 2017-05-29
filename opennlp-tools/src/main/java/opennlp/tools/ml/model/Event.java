@@ -18,6 +18,12 @@
 package opennlp.tools.ml.model;
 
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Objects;
 
 /**
@@ -49,6 +55,41 @@ public class Event {
 
   public float[] getValues() {
     return values;
+  }
+
+  // this could be moved to the Two Pass ...
+  void asBinary(OutputStream out) throws IOException {
+
+    DataOutputStream dataOut = new DataOutputStream(out);
+
+    dataOut.writeUTF(outcome);
+
+    dataOut.writeInt(context.length);
+
+    for (String feature : context) {
+      dataOut.writeUTF(feature);
+    }
+  }
+
+  // this could be moved to Two Pass
+  static Event readEvent(InputStream in) throws IOException {
+
+    DataInputStream dataIn = new DataInputStream(in);
+
+    try {
+      String outcome = dataIn.readUTF();
+
+      String[] context = new String[dataIn.readInt()];
+
+      for (int i = 0; i < context.length; i++) {
+        context[i] = dataIn.readUTF();
+      }
+
+      return new Event(outcome, context, null);
+    }
+    catch (EOFException e) {
+      return null;
+    }
   }
 
   public String toString() {

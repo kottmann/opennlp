@@ -17,12 +17,14 @@
 
 package opennlp.tools.ml.model;
 
-import java.io.BufferedWriter;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -61,18 +63,27 @@ public class TwoPassDataIndexer extends AbstractDataIndexer {
 
     File tmp = File.createTempFile("events", null);
     tmp.deleteOnExit();
-    Writer osw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(tmp),"UTF8"));
-    int numEvents = computeEventCounts(eventStream, osw, predicateIndex, cutoff);
+
+    int numEvents;
+    try (OutputStream osw = (new BufferedOutputStream(
+        new FileOutputStream(tmp), 1024 * 1024 * 50))) {
+      numEvents = computeEventCounts(eventStream, osw, predicateIndex, cutoff);
+    }
+
     display("done. " + numEvents + " events\n");
 
     display("\tIndexing...  ");
 
-    try (FileEventStream fes = new FileEventStream(tmp)) {
+    try (InputStream fes = (new BufferedInputStream(new FileInputStream(tmp),
+        1024 * 1024 * 10))) {
       eventsToCompare = index(numEvents, fes, predicateIndex);
     }
+    finally {
+      tmp.delete();
+    }
+
     // done with predicates
     predicateIndex = null;
-    tmp.delete();
     display("done.\n");
 
     if (sort) {
@@ -96,18 +107,26 @@ public class TwoPassDataIndexer extends AbstractDataIndexer {
    * @param predicatesInOut a <code>TObjectIntHashMap</code> value
    * @param cutoff an <code>int</code> value
    */
-  private int computeEventCounts(ObjectStream<Event> eventStream, Writer eventStore,
+  private int computeEventCounts(ObjectStream<Event> eventStream, OutputStream eventStore,
       Map<String,Integer> predicatesInOut, int cutoff) throws IOException {
     Map<String,Integer> counter = new HashMap<>();
     int eventCount = 0;
     Set<String> predicateSet = new HashSet<>();
 
+    int count = 0;
+    long time = System.currentTimeMillis();
     Event ev;
     while ((ev = eventStream.read()) != null) {
       eventCount++;
-      eventStore.write(FileEventStream.toLine(ev));
+      ev.asBinary(eventStore);
       String[] ec = ev.getContext();
       update(ec,predicateSet,counter,cutoff);
+      count++;
+      if (count % 50000 == 0) {
+        System.out.println("COUNT " + count + " " + ((System.currentTimeMillis() - time) / 1000d));
+
+        time = System.currentTimeMillis();
+      }
     }
     predCounts = new int[predicateSet.size()];
     int index = 0;
@@ -121,7 +140,7 @@ public class TwoPassDataIndexer extends AbstractDataIndexer {
   }
 
   // TODO: merge this code with the copy and paste version in OnePassDataIndexer
-  private List<ComparableEvent> index(int numEvents, ObjectStream<Event> es,
+  private List<ComparableEvent> index(int numEvents, InputStream es,
       Map<String,Integer> predicateIndex) throws IOException {
     Map<String,Integer> omap = new HashMap<>();
 
@@ -130,8 +149,7 @@ public class TwoPassDataIndexer extends AbstractDataIndexer {
     List<Integer> indexedContext = new ArrayList<>();
 
     Event ev;
-    while ((ev = es.read()) != null) {
-      String[] econtext = ev.getContext();
+    while ((ev = Event.readEvent(es)) != null) {
       ComparableEvent ce;
 
       int ocID;
@@ -145,7 +163,7 @@ public class TwoPassDataIndexer extends AbstractDataIndexer {
         omap.put(oc, ocID);
       }
 
-      for (String pred : econtext) {
+      for (String pred : ev.getContext()) {
         if (predicateIndex.containsKey(pred)) {
           indexedContext.add(predicateIndex.get(pred));
         }
