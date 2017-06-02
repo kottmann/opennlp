@@ -25,6 +25,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import opennlp.tools.ml.AbstractTrainer;
+import opennlp.tools.ml.HashUtil;
 import opennlp.tools.ml.model.DataIndexer;
 import opennlp.tools.ml.model.FileEventStream;
 import opennlp.tools.ml.model.OnePassRealValueDataIndexer;
@@ -74,8 +75,10 @@ public class RealValueModelTest {
     }
 
     features2Classify = new String[] {"feature1","feature2","feature3","feature4","feature5"};
-    realResults = realModel.eval(features2Classify, new float[] {5.5f, 6.1f, 9.1f, 4.0f, 1.8f});
-    repeatResults = repeatModel.eval(features2Classify, new float[] {5.5f, 6.1f, 9.1f, 4.0f, 1.8f});
+    realResults = realModel.eval(HashUtil.hash(features2Classify),
+        new float[] {5.5f, 6.1f, 9.1f, 4.0f, 1.8f});
+    repeatResults = repeatModel.eval(HashUtil.hash(features2Classify),
+        new float[] {5.5f, 6.1f, 9.1f, 4.0f, 1.8f});
 
     System.out.println();
     Assert.assertEquals(realResults.length, repeatResults.length);

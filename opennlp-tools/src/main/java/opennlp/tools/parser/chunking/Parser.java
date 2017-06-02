@@ -30,6 +30,7 @@ import opennlp.tools.chunker.ChunkerModel;
 import opennlp.tools.dictionary.Dictionary;
 import opennlp.tools.ml.BeamSearch;
 import opennlp.tools.ml.EventTrainer;
+import opennlp.tools.ml.HashUtil;
 import opennlp.tools.ml.TrainerFactory;
 import opennlp.tools.ml.model.Event;
 import opennlp.tools.ml.model.MaxentModel;
@@ -124,9 +125,9 @@ public class Parser extends AbstractBottomUpParser {
 
   @Override
   protected void advanceTop(Parse p) {
-    buildModel.eval(buildContextGenerator.getContext(p.getChildren(), 0), bprobs);
+    buildModel.eval(HashUtil.hash(buildContextGenerator.getContext(p.getChildren(), 0)), bprobs);
     p.addProb(Math.log(bprobs[topStartIndex]));
-    checkModel.eval(checkContextGenerator.getContext(p.getChildren(), TOP_NODE, 0, 0), cprobs);
+    checkModel.eval(HashUtil.hash(checkContextGenerator.getContext(p.getChildren(), TOP_NODE, 0, 0)), cprobs);
     p.addProb(Math.log(cprobs[completeIndex]));
     p.setType(TOP_NODE);
   }
@@ -166,7 +167,7 @@ public class Parser extends AbstractBottomUpParser {
     int originalAdvanceIndex = mapParseIndex(advanceNodeIndex,children,originalChildren);
     List<Parse> newParsesList = new ArrayList<>(buildModel.getNumOutcomes());
     //call build
-    buildModel.eval(buildContextGenerator.getContext(children, advanceNodeIndex), bprobs);
+    buildModel.eval(HashUtil.hash(buildContextGenerator.getContext(children, advanceNodeIndex)), bprobs);
     double bprobSum = 0;
     while (bprobSum < probMass) {
       // The largest unadvanced labeling.
@@ -206,9 +207,9 @@ public class Parser extends AbstractBottomUpParser {
       //check
       //String[] context = checkContextGenerator.getContext(newParse1.getChildren(), lastStartType,
       // lastStartIndex, advanceNodeIndex);
-      checkModel.eval(checkContextGenerator.getContext(
+      checkModel.eval(HashUtil.hash(checkContextGenerator.getContext(
           collapsePunctuation(newParse1.getChildren(),punctSet), lastStartType, lastStartIndex,
-          advanceNodeIndex), cprobs);
+          advanceNodeIndex)), cprobs);
       //System.out.println("check "+lastStartType+" "+cprobs[completeIndex]+" "+cprobs[incompleteIndex]
       // +" "+tag+" "+java.util.Arrays.asList(context));
       Parse newParse2;

@@ -22,7 +22,7 @@ import opennlp.tools.ml.model.Context;
 
 public class QNModel extends AbstractModel {
 
-  public QNModel(Context[] params, String[] predLabels, String[] outcomeNames) {
+  public QNModel(Context[] params, long[] predLabels, String[] outcomeNames) {
     super(params, predLabels, outcomeNames);
     this.modelType = ModelType.MaxentQn;
   }
@@ -31,19 +31,19 @@ public class QNModel extends AbstractModel {
     return this.outcomeNames.length;
   }
 
-  private Context getPredIndex(String predicate) {
+  private Context getPredIndex(long predicate) {
     return pmap.get(predicate);
   }
 
-  public double[] eval(String[] context) {
+  public double[] eval(long[] context) {
     return eval(context, new double[evalParams.getNumOutcomes()]);
   }
 
-  public double[] eval(String[] context, double[] probs) {
+  public double[] eval(long[] context, double[] probs) {
     return eval(context, null, probs);
   }
 
-  public double[] eval(String[] context, float[] values) {
+  public double[] eval(long[] context, float[] values) {
     return eval(context, values, new double[evalParams.getNumOutcomes()]);
   }
 
@@ -59,7 +59,8 @@ public class QNModel extends AbstractModel {
    *          Probability for outcomes.
    * @return Normalized probabilities for the outcomes given the context.
    */
-  private double[] eval(String[] context, float[] values, double[] probs) {
+  private double[] eval(long[] context, float[] values, double[] probs) {
+    Context[] params = evalParams.getParams();
 
     for (int ci = 0; ci < context.length; ci++) {
       Context pred = getPredIndex(context[ci]);

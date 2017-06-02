@@ -23,11 +23,11 @@ package opennlp.tools.ml.model;
  * much more compact.
  */
 public class ComparablePredicate implements Comparable<ComparablePredicate> {
-  public String name;
+  public Long name;
   public int[] outcomes;
   public double[] params;
 
-  public ComparablePredicate(String n, int[] ocs, double[] ps) {
+  public ComparablePredicate(long n, int[] ocs, double[] ps) {
     name = n;
     outcomes = ocs;
     params = ps;

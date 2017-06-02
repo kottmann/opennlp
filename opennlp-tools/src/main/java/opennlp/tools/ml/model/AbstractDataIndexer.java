@@ -29,6 +29,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import opennlp.tools.ml.AbstractTrainer;
+import opennlp.tools.ml.HashUtil;
 import opennlp.tools.util.InsufficientTrainingDataException;
 import opennlp.tools.util.ObjectStream;
 import opennlp.tools.util.TrainingParameters;
@@ -68,7 +69,7 @@ public abstract class AbstractDataIndexer implements DataIndexer {
   /** The number of times an event occured in the training data. */
   protected int[] numTimesEventsSeen;
   /** The predicate/context names. */
-  protected String[] predLabels;
+  protected long[] predLabels;
   /** The names of the outcomes. */
   protected String[] outcomeLabels;
   /** The number of times each predicate occured. */
@@ -86,7 +87,7 @@ public abstract class AbstractDataIndexer implements DataIndexer {
     return outcomeList;
   }
 
-  public String[] getPredLabels() {
+  public long[] getPredLabels() {
     return predLabels;
   }
 
@@ -159,7 +160,7 @@ public abstract class AbstractDataIndexer implements DataIndexer {
   }
 
   protected List<ComparableEvent> index(ObjectStream<Event> events,
-                                        Map<String, Integer> predicateIndex) throws IOException {
+                                        Map<Long, Integer> predicateIndex) throws IOException {
     Map<String, Integer> omap = new HashMap<>();
 
     List<ComparableEvent> eventsToCompare = new ArrayList<>();
@@ -170,7 +171,7 @@ public abstract class AbstractDataIndexer implements DataIndexer {
       omap.putIfAbsent(ev.getOutcome(), omap.size());
 
       int[] cons = Arrays.stream(ev.getContext())
-          .map(pred -> predicateIndex.get(pred))
+          .mapToObj(pred -> predicateIndex.get(pred))
           .filter(Objects::nonNull)
           .mapToInt(i -> i).toArray();
 
@@ -184,7 +185,7 @@ public abstract class AbstractDataIndexer implements DataIndexer {
       }
     }
     outcomeLabels = toIndexedStringArray(omap);
-    predLabels = toIndexedStringArray(predicateIndex);
+    predLabels = toIndexedLongArray(predicateIndex);
     return eventsToCompare;
   }
 
@@ -201,9 +202,9 @@ public abstract class AbstractDataIndexer implements DataIndexer {
    * @deprecated will be removed after 1.8.1 release
    */
   @Deprecated
-  protected static void update(String[] ec, Set<String> predicateSet,
-      Map<String,Integer> counter, int cutoff) {
-    for (String s : ec) {
+  protected static void update(String[] ec, Set<Long> predicateSet,
+      Map<Long,Integer> counter, int cutoff) {
+    for (long s : HashUtil.hash(ec)) {
       counter.merge(s, 1, (value, one) -> value + one);
 
       if (!predicateSet.contains(s) && counter.get(s) >= cutoff) {
@@ -217,8 +218,8 @@ public abstract class AbstractDataIndexer implements DataIndexer {
    * @param ec The contexts/features which occur in a event.
    * @param counter The predicate counters.
    */
-  protected static void update(String[] ec, Map<String,Integer> counter) {
-    for (String s : ec) {
+  protected static void update(long[] ec, Map<Long,Integer> counter) {
+    for (long s : ec) {
       counter.merge(s, 1, (value, one) -> value + one);
     }
   }
@@ -235,6 +236,14 @@ public abstract class AbstractDataIndexer implements DataIndexer {
   protected static String[] toIndexedStringArray(Map<String, Integer> labelToIndexMap) {
     return labelToIndexMap.entrySet().stream().sorted(Comparator.comparingInt(Map.Entry::getValue))
         .map(Map.Entry::getKey).toArray(String[]::new);
+  }
+
+  protected static long[] toIndexedLongArray(Map<Long, Integer> labelToIndexMap) {
+    final long[] array = new long[labelToIndexMap.size()];
+    for (Long label : labelToIndexMap.keySet()) {
+      array[labelToIndexMap.get(label)] = label;
+    }
+    return array;
   }
 
   public float[][] getValues() {

@@ -75,6 +75,10 @@ public class PlainTextNaiveBayesModelWriter extends NaiveBayesModelWriter {
     output.newLine();
   }
 
+  public void writeLong(long i) throws java.io.IOException {
+    output.write(Long.toString(i));
+  }
+
   public void writeDouble(double d) throws java.io.IOException {
     output.write(Double.toString(d));
     output.newLine();

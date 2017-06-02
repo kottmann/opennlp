@@ -56,6 +56,10 @@ public class PlainTextFileDataReader implements DataReader {
     return Integer.parseInt(input.readLine());
   }
 
+  public long readLong() throws IOException {
+    return Long.parseLong(input.readLine());
+  }
+
   public String readUTF() throws IOException {
     return input.readLine();
   }

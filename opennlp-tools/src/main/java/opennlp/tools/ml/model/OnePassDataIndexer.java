@@ -45,7 +45,7 @@ public class OnePassDataIndexer extends AbstractDataIndexer {
     display("Indexing events with OnePass using cutoff of " + cutoff + "\n\n");
 
     display("\tComputing event counts...  ");
-    Map<String, Integer> predicateIndex = new HashMap<>();
+    Map<Long, Integer> predicateIndex = new HashMap<>();
     List<Event> events = computeEventCounts(eventStream, predicateIndex, cutoff);
     display("done. " + events.size() + " events\n");
 
@@ -75,20 +75,20 @@ public class OnePassDataIndexer extends AbstractDataIndexer {
    * @return a <code>TLinkedList</code> value
    */
   private List<Event> computeEventCounts(ObjectStream<Event> eventStream,
-      Map<String, Integer> predicatesInOut, int cutoff) throws IOException {
+      Map<Long, Integer> predicatesInOut, int cutoff) throws IOException {
 
-    Map<String, Integer> counter = new HashMap<>();
+    Map<Long, Integer> counter = new HashMap<>();
     List<Event> events = new LinkedList<>();
     Event ev;
     while ((ev = eventStream.read()) != null) {
       events.add(ev);
-      update(ev.getContext(), counter);
+      update((ev.getContext()), counter);
     }
 
-    String[] predicateSet = counter.entrySet().stream()
+    long[] predicateSet = counter.entrySet().stream()
         .filter(entry -> entry.getValue() >= cutoff)
         .map(Map.Entry::getKey).sorted()
-        .toArray(String[]::new);
+        .mapToLong(Long::longValue).toArray();
 
     predCounts = new int[predicateSet.length];
     for (int i = 0; i < predicateSet.length; i++) {

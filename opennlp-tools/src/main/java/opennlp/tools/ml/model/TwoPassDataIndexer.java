@@ -54,7 +54,7 @@ public class TwoPassDataIndexer extends AbstractDataIndexer {
 
     display("\tComputing event counts...  ");
 
-    Map<String,Integer> predicateIndex = new HashMap<>();
+    Map<Long, Integer> predicateIndex = new HashMap<>();
 
     File tmp = File.createTempFile("events", null);
     tmp.deleteOnExit();
@@ -97,22 +97,21 @@ public class TwoPassDataIndexer extends AbstractDataIndexer {
    * @param cutoff an <code>int</code> value
    */
   private int computeEventCounts(ObjectStream<Event> eventStream, Writer eventStore,
-      Map<String,Integer> predicatesInOut, int cutoff) throws IOException {
-    Map<String,Integer> counter = new HashMap<>();
+      Map<Long, Integer> predicatesInOut, int cutoff) throws IOException {
+    Map<Long, Integer> counter = new HashMap<>();
     int eventCount = 0;
 
     Event ev;
     while ((ev = eventStream.read()) != null) {
       eventCount++;
       eventStore.write(FileEventStream.toLine(ev));
-      String[] ec = ev.getContext();
+      long[] ec = ev.getContext();
       update(ec, counter);
     }
 
-    String[] predicateSet = counter.entrySet().stream()
+    long[] predicateSet = counter.entrySet().stream()
         .filter(entry -> entry.getValue() >= cutoff)
-        .map(Map.Entry::getKey).sorted()
-        .toArray(String[]::new);
+        .map(Map.Entry::getKey).sorted().mapToLong(Long::longValue).toArray();
 
     predCounts = new int[predicateSet.length];
     for (int i = 0; i < predicateSet.length; i++) {

@@ -17,11 +17,7 @@
 
 package opennlp.tools.langdetect;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import opennlp.tools.ngram.NGramModel;
-import opennlp.tools.util.StringList;
+import opennlp.tools.ml.HashUtil;
 import opennlp.tools.util.normalizer.AggregateCharSequenceNormalizer;
 import opennlp.tools.util.normalizer.CharSequenceNormalizer;
 
@@ -49,22 +45,49 @@ class LanguageDetectorContextGenerator {
     this.normalizer = new AggregateCharSequenceNormalizer(normalizers);
   }
 
+  private static class LowerCasedSequence implements  CharSequence {
+
+    private CharSequence sequence;
+
+    public LowerCasedSequence(CharSequence sequence) {
+      this.sequence = sequence;
+    }
+
+    @Override
+    public int length() {
+      return sequence.length();
+    }
+
+    @Override
+    public char charAt(int index) {
+      return Character.toLowerCase(sequence.charAt(index));
+    }
+
+    @Override
+    public CharSequence subSequence(int start, int end) {
+      return new LowerCasedSequence(sequence.subSequence(start, end));
+    }
+  }
+
   /**
    * Generates the context for a document using character ngrams.
    * @param document document to extract context from
    * @return the generated context
    */
-  public String[] getContext(String document) {
-    Collection<String> context = new ArrayList<>();
+  public long[] getContext(String document) {
 
-    NGramModel model = new NGramModel();
-    model.add(document, minLength, maxLength);
+    int contextIndex = 0;
+    long[] context = new long[document.length() + document.length() - 1 + document.length() - 2];
 
-    for (StringList tokenList : model) {
-      if (tokenList.size() > 0) {
-        context.add(tokenList.getToken(0));
+    CharSequence lowerCased = new LowerCasedSequence(document);
+
+    for (int textIndex = 0; textIndex < document.length(); textIndex++) {
+      for (int lengthIndex = minLength; textIndex + lengthIndex - 1 < document.length()
+          && lengthIndex < maxLength + 1; lengthIndex++) {
+        context[contextIndex++] = (HashUtil.hash(lowerCased, textIndex, lengthIndex));
       }
     }
-    return context.toArray(new String[context.size()]);
+
+    return context;
   }
 }

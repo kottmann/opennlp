@@ -37,7 +37,7 @@ import opennlp.tools.ml.model.Context;
 public abstract class PerceptronModelWriter extends AbstractModelWriter {
   protected Context[] PARAMS;
   protected String[] OUTCOME_LABELS;
-  protected String[] PRED_LABELS;
+  protected long[] PRED_LABELS;
   private int numOutcomes;
 
   public PerceptronModelWriter(AbstractModel model) {
@@ -47,14 +47,15 @@ public abstract class PerceptronModelWriter extends AbstractModelWriter {
     PARAMS = (Context[]) data[0];
 
 
-    Map<String, Context> pmap = (Map<String, Context>) data[1];
+
+    Map<Long, Context> pmap = (Map<Long, Context>) data[1];
 
     OUTCOME_LABELS = (String[]) data[2];
     PARAMS = new Context[pmap.size()];
-    PRED_LABELS = new String[pmap.size()];
+    PRED_LABELS = new long[pmap.size()];
 
     int i = 0;
-    for (Map.Entry<String, Context> pred : pmap.entrySet()) {
+    for (Map.Entry<Long, Context> pred : pmap.entrySet()) {
       PRED_LABELS[i] = pred.getKey();
       PARAMS[i] = pred.getValue();
       i++;
@@ -155,7 +156,7 @@ public abstract class PerceptronModelWriter extends AbstractModelWriter {
     writeInt(sorted.length);
 
     for (ComparablePredicate s : sorted) {
-      writeUTF(s.name);
+      writeLong(s.name);
     }
 
     // write out the parameters

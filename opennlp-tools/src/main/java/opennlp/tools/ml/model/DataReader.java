@@ -26,4 +26,6 @@ public interface DataReader {
   public int readInt() throws IOException;
 
   public String readUTF() throws IOException;
+
+  public long readLong() throws IOException;
 }

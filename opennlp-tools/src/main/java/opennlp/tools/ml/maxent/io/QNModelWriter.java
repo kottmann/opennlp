@@ -57,7 +57,7 @@ public abstract class QNModelWriter extends GISModelWriter {
     writeInt(PARAMS.length);
 
     for (int i = 0; i < sorted.length; i++)
-      writeUTF(sorted[i].name);
+      writeLong(sorted[i].name);
 
     // write out the parameters
     for (int i = 0; i < sorted.length; i++)

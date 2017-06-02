@@ -19,7 +19,9 @@ package opennlp.tools.ml.naivebayes;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
+import opennlp.tools.ml.HashUtil;
 import opennlp.tools.ml.model.AbstractModel;
 import opennlp.tools.ml.model.AbstractModelReader;
 import opennlp.tools.ml.model.Context;
@@ -62,11 +64,11 @@ public class NaiveBayesModelReader extends AbstractModelReader {
   public AbstractModel constructModel() throws IOException {
     String[] outcomeLabels = getOutcomes();
     int[][] outcomePatterns = getOutcomePatterns();
-    String[] predLabels = getPredicates();
+    long[] predLabels = getPredicates();
     Context[] params = getParameters(outcomePatterns);
 
     return new NaiveBayesModel(params,
-        predLabels,
+        Arrays.stream(outcomeLabels).mapToLong(HashUtil::hash).toArray(),
         outcomeLabels);
   }
 

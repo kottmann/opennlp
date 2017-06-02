@@ -31,6 +31,8 @@ public interface MaxentModel {
    *         outcomes, all of which sum to 1.
    *
    **/
+  double[] eval(long[] context);
+
   double[] eval(String[] context);
 
   /**
@@ -42,7 +44,7 @@ public interface MaxentModel {
      *         outcomes, all of which sum to 1.
      * @return an array of the probabilities for each of the different outcomes, all of which sum to 1.
      **/
-  double[] eval(String[] context, double[] probs);
+  double[] eval(long[] context, double[] probs);
 
   /**
    * Evaluates a contexts with the specified context values.
@@ -51,7 +53,7 @@ public interface MaxentModel {
    * @param values The values associated with each context.
    * @return an array of the probabilities for each of the different outcomes, all of which sum to 1.
    */
-  double[] eval(String[] context, float[] values);
+  double[] eval(long[] context, float[] values);
 
   /**
    * Simple function to return the outcome associated with the index

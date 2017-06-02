@@ -30,6 +30,7 @@ import opennlp.tools.chunker.ChunkerME;
 import opennlp.tools.chunker.ChunkerModel;
 import opennlp.tools.dictionary.Dictionary;
 import opennlp.tools.ml.EventTrainer;
+import opennlp.tools.ml.HashUtil;
 import opennlp.tools.ml.TrainerFactory;
 import opennlp.tools.ml.model.Event;
 import opennlp.tools.ml.model.MaxentModel;
@@ -246,7 +247,7 @@ public class Parser extends AbstractBottomUpParser {
     int originalAdvanceIndex = mapParseIndex(advanceNodeIndex,children,originalChildren);
     List<Parse> newParsesList = new ArrayList<>();
     //call build model
-    buildModel.eval(buildContextGenerator.getContext(children, advanceNodeIndex), bprobs);
+    buildModel.eval(HashUtil.hash(buildContextGenerator.getContext(children, advanceNodeIndex)), bprobs);
     double doneProb = bprobs[doneIndex];
     if (debugOn)
       System.out.println("adi=" + advanceNodeIndex + " " + advanceNode.getType() + "."
@@ -336,7 +337,8 @@ public class Parser extends AbstractBottomUpParser {
         List<Parse> rf = getRightFrontier(p,punctSet);
         for (int fi = 0,fs = rf.size(); fi < fs; fi++) {
           Parse fn = rf.get(fi);
-          attachModel.eval(attachContextGenerator.getContext(children, advanceNodeIndex, rf, fi), aprobs);
+          attachModel.eval(
+              HashUtil.hash(attachContextGenerator.getContext(children, advanceNodeIndex, rf, fi)), aprobs);
           if (debugOn) {
             // List cs = java.util.Arrays.asList(attachContextGenerator.getContext(children,
             //     advanceNodeIndex,rf,fi,punctSet));

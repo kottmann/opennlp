@@ -17,6 +17,8 @@
 
 package opennlp.tools.ml.model;
 
+import java.io.IOException;
+
 public abstract class AbstractModelWriter {
 
   public AbstractModelWriter() {
@@ -28,6 +30,8 @@ public abstract class AbstractModelWriter {
   public abstract void writeInt(int i) throws java.io.IOException;
 
   public abstract void writeDouble(double d) throws java.io.IOException;
+
+  public abstract void writeLong(long l) throws IOException;
 
   public abstract void close() throws java.io.IOException;
 

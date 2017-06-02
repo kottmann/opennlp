@@ -36,7 +36,7 @@ import opennlp.tools.ml.model.Context;
 public abstract class NaiveBayesModelWriter extends AbstractModelWriter {
   protected Context[] PARAMS;
   protected String[] OUTCOME_LABELS;
-  protected String[] PRED_LABELS;
+  protected long[] PRED_LABELS;
   int numOutcomes;
 
   public NaiveBayesModelWriter(AbstractModel model) {
@@ -46,14 +46,14 @@ public abstract class NaiveBayesModelWriter extends AbstractModelWriter {
     PARAMS = (Context[]) data[0];
 
     @SuppressWarnings("unchecked")
-    Map<String, Context> pmap = (Map<String, Context>) data[1];
+    Map<Long, Context> pmap = (Map<Long, Context>) data[1];
 
     OUTCOME_LABELS = (String[]) data[2];
     PARAMS = new Context[pmap.size()];
-    PRED_LABELS = new String[pmap.size()];
+    PRED_LABELS = new long[pmap.size()];
 
     int i = 0;
-    for (Map.Entry<String, Context> pred : pmap.entrySet()) {
+    for (Map.Entry<Long, Context> pred : pmap.entrySet()) {
       PRED_LABELS[i] = pred.getKey();
       PARAMS[i] = pred.getValue();
       i++;
@@ -165,7 +165,7 @@ public abstract class NaiveBayesModelWriter extends AbstractModelWriter {
     writeInt(sorted.length);
 
     for (ComparablePredicate s : sorted) {
-      writeUTF(s.name);
+      writeLong(s.name);
     }
 
     // write out the parameters

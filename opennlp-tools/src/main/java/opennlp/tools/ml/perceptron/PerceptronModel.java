@@ -23,24 +23,25 @@ import opennlp.tools.ml.model.EvalParameters;
 
 public class PerceptronModel extends AbstractModel {
 
-  public PerceptronModel(Context[] params, String[] predLabels, String[] outcomeNames) {
+
+  public PerceptronModel(Context[] params, long[] predLabels, String[] outcomeNames) {
     super(params,predLabels,outcomeNames);
     modelType = ModelType.Perceptron;
   }
 
-  public double[] eval(String[] context) {
+  public double[] eval(long[] context) {
     return eval(context,new double[evalParams.getNumOutcomes()]);
   }
 
-  public double[] eval(String[] context, float[] values) {
+  public double[] eval(long[] context, float[] values) {
     return eval(context,values,new double[evalParams.getNumOutcomes()]);
   }
 
-  public double[] eval(String[] context, double[] probs) {
+  public double[] eval(long[] context, double[] probs) {
     return eval(context,null,probs);
   }
 
-  public double[] eval(String[] context, float[] values,double[] outsums) {
+  public double[] eval(long[] context, float[] values,double[] outsums) {
     Context[] scontexts = new Context[context.length];
     java.util.Arrays.fill(outsums, 0);
     for (int i = 0; i < context.length; i++) {

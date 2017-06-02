@@ -88,7 +88,7 @@ public class NaiveBayesTrainer extends AbstractEventTrainer {
    * disk and thereby allow users to know what the outcome was in human
    * understandable terms.
    */
-  private String[] predLabels;
+  private long[] predLabels;
 
   public NaiveBayesTrainer() {
   }

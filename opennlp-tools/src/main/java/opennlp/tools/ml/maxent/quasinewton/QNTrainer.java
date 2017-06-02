@@ -192,7 +192,7 @@ public class QNTrainer extends AbstractEventTrainer {
     double[] parameters = minimizer.minimize(objectiveFunction);
 
     // Construct model with trained parameters
-    String[] predLabels = indexer.getPredLabels();
+    long[] predLabels = indexer.getPredLabels();
     int nPredLabels = predLabels.length;
 
     String[] outcomeNames = indexer.getOutcomeLabels();

@@ -36,6 +36,11 @@ public class ObjectDataReader implements DataReader {
     return ois.readInt();
   }
 
+  @Override
+  public long readLong() throws IOException {
+    return ois.read();
+  }
+
   public String readUTF() throws IOException {
     return ois.readUTF();
   }

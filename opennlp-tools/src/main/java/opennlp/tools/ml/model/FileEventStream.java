@@ -70,9 +70,9 @@ public class FileEventStream implements ObjectStream<Event> {
       StringTokenizer st = new StringTokenizer(line);
       String outcome = st.nextToken();
       int count = st.countTokens();
-      String[] context = new String[count];
+      long[] context = new long[count];
       for (int ci = 0; ci < count; ci++) {
-        context[ci] = st.nextToken();
+        context[ci] = Long.parseLong(st.nextToken());
       }
 
       return new Event(outcome, context);
@@ -94,7 +94,7 @@ public class FileEventStream implements ObjectStream<Event> {
   public static String toLine(Event event) {
     StringBuilder sb = new StringBuilder();
     sb.append(event.getOutcome());
-    String[] context = event.getContext();
+    long[] context = event.getContext();
     for (int ci = 0,cl = context.length; ci < cl; ci++) {
       sb.append(" ").append(context[ci]);
     }

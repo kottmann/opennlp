@@ -77,7 +77,7 @@ public class LanguageDetectorFactoryTest {
   @Test
   public void testDummyFactoryContextGenerator() throws Exception {
     LanguageDetectorContextGenerator cg = model.getFactory().getContextGenerator();
-    String[] context = cg.getContext(
+    long[] context = cg.getContext(
         "a dummy text phrase to test if the context generator works!!!!!!!!!!!!");
 
     Set<String> set = new HashSet(Arrays.asList(context));

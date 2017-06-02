@@ -26,6 +26,7 @@ import org.junit.Test;
 
 import opennlp.tools.ml.AbstractTrainer;
 import opennlp.tools.ml.EventTrainer;
+import opennlp.tools.ml.HashUtil;
 import opennlp.tools.ml.TrainerFactory;
 import opennlp.tools.ml.model.DataIndexer;
 import opennlp.tools.ml.model.Event;
@@ -77,7 +78,7 @@ public class ScaleDoesntMatterTest {
     MaxentModel smallModel = smallModelTrainer.train(testDataIndexer);
     String[] contexts = smallTest.split(" ");
     float[] values = RealValueFileEventStream.parseContexts(contexts);
-    double[] smallResults = smallModel.eval(contexts, values);
+    double[] smallResults = smallModel.eval(HashUtil.hash(contexts), values);
 
     String smallResultString = smallModel.getAllOutcomes(smallResults);
     System.out.println("smallResults: " + smallResultString);
@@ -93,7 +94,7 @@ public class ScaleDoesntMatterTest {
     MaxentModel largeModel = largeModelTrainer.train(testDataIndexer);
     contexts = largeTest.split(" ");
     values = RealValueFileEventStream.parseContexts(contexts);
-    double[] largeResults = largeModel.eval(contexts, values);
+    double[] largeResults = largeModel.eval(HashUtil.hash(contexts), values);
 
     String largeResultString = largeModel.getAllOutcomes(largeResults);
     System.out.println("largeResults: " + largeResultString);

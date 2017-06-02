@@ -43,8 +43,8 @@ public class MockDataIndexer implements DataIndexer {
   }
 
   @Override
-  public String[] getPredLabels() {
-    return new String[0];
+  public long[] getPredLabels() {
+    return new long[0];
   }
 
   @Override

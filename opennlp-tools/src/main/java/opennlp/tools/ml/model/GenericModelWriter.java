@@ -85,6 +85,10 @@ public class GenericModelWriter extends AbstractModelWriter {
     delegateWriter.writeInt(i);
   }
 
+  public void writeLong(long i) throws java.io.IOException {
+    delegateWriter.writeLong(i);
+  }
+
   @Override
   public void writeUTF(String s) throws IOException {
     delegateWriter.writeUTF(s);

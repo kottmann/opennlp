@@ -74,7 +74,7 @@ public class GISModelReader extends AbstractModelReader {
 
     String[] outcomeLabels = getOutcomes();
     int[][] outcomePatterns = getOutcomePatterns();
-    String[] predLabels = getPredicates();
+    long[] predLabels = getPredicates();
     Context[] params = getParameters(outcomePatterns);
     return new GISModel(params, predLabels, outcomeLabels);
   }

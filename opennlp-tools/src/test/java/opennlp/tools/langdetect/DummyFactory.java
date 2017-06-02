@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import opennlp.tools.ml.HashUtil;
 import opennlp.tools.ngram.NGramModel;
 import opennlp.tools.tokenize.SimpleTokenizer;
 import opennlp.tools.util.StringList;
@@ -60,8 +61,8 @@ public class DummyFactory extends LanguageDetectorFactory {
     }
 
     @Override
-    public String[] getContext(String document) {
-      String[] superContext = super.getContext(document);
+    public long[] getContext(String document) {
+      long[] superContext = super.getContext(document);
 
       List<String> context = new ArrayList(Arrays.asList(superContext));
 
@@ -82,7 +83,7 @@ public class DummyFactory extends LanguageDetectorFactory {
         }
       }
 
-      return context.toArray(new String[context.size()]);
+      return HashUtil.hash(context.toArray(new String[context.size()]));
     }
   }
 }

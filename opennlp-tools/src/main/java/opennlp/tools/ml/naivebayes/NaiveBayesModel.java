@@ -17,8 +17,6 @@
 
 package opennlp.tools.ml.naivebayes;
 
-import java.util.Map;
-
 import opennlp.tools.ml.model.AbstractModel;
 import opennlp.tools.ml.model.Context;
 import opennlp.tools.ml.model.EvalParameters;
@@ -31,16 +29,8 @@ public class NaiveBayesModel extends AbstractModel {
   protected double[] outcomeTotals;
   protected long vocabulary;
 
-  NaiveBayesModel(Context[] params, String[] predLabels, Map<String, Context> pmap,
-                         String[] outcomeNames) {
-    super(params, predLabels, pmap, outcomeNames);
-    outcomeTotals = initOutcomeTotals(outcomeNames, params);
-    this.evalParams = new NaiveBayesEvalParameters(params, outcomeNames.length,
-        outcomeTotals, predLabels.length);
-    modelType = ModelType.NaiveBayes;
-  }
 
-  public NaiveBayesModel(Context[] params, String[] predLabels, String[] outcomeNames) {
+  public NaiveBayesModel(Context[] params, long[] predLabels, String[] outcomeNames) {
     super(params, predLabels, outcomeNames);
     outcomeTotals = initOutcomeTotals(outcomeNames, params);
     this.evalParams = new NaiveBayesEvalParameters(params, outcomeNames.length,
@@ -61,19 +51,19 @@ public class NaiveBayesModel extends AbstractModel {
     return outcomeTotals;
   }
 
-  public double[] eval(String[] context) {
+  public double[] eval(long[] context) {
     return eval(context, new double[evalParams.getNumOutcomes()]);
   }
 
-  public double[] eval(String[] context, float[] values) {
+  public double[] eval(long[] context, float[] values) {
     return eval(context, values, new double[evalParams.getNumOutcomes()]);
   }
 
-  public double[] eval(String[] context, double[] probs) {
+  public double[] eval(long[] context, double[] probs) {
     return eval(context, null, probs);
   }
 
-  public double[] eval(String[] context, float[] values, double[] outsums) {
+  public double[] eval(long[] context, float[] values, double[] outsums) {
     Context[] scontexts = new Context[context.length];
     java.util.Arrays.fill(outsums, 0);
     for (int i = 0; i < context.length; i++) {

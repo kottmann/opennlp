@@ -63,12 +63,10 @@ public class PerceptronModelReader extends AbstractModelReader {
   public AbstractModel constructModel() throws IOException {
     String[] outcomeLabels = getOutcomes();
     int[][] outcomePatterns = getOutcomePatterns();
-    String[] predLabels = getPredicates();
+    long[] predLabels = getPredicates();
     Context[] params = getParameters(outcomePatterns);
 
-    return new PerceptronModel(params,
-        predLabels,
-        outcomeLabels);
+    return new PerceptronModel(params, predLabels, outcomeLabels);
   }
 
   public void checkModelType() throws java.io.IOException {

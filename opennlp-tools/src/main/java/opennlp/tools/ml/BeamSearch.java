@@ -105,9 +105,9 @@ public class BeamSearch<T> implements SequenceClassificationModel<T> {
         String[] contexts = cg.getContext(i, sequence, outcomes, additionalContext);
         double[] scores;
         if (contextsCache != null) {
-          scores = contextsCache.computeIfAbsent(contexts, c -> model.eval(c, probs));
+          scores = contextsCache.computeIfAbsent(contexts, c -> model.eval(HashUtil.hash(c), probs));
         } else {
-          scores = model.eval(contexts, probs);
+          scores = model.eval(HashUtil.hash(contexts), probs);
         }
 
         double[] temp_scores = new double[scores.length];

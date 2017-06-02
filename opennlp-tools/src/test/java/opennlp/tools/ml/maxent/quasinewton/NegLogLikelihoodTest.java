@@ -175,15 +175,15 @@ public class NegLogLikelihoodTest {
   }
 
   private double[] alignDoubleArrayForTestData(double[] expected,
-      String[] predLabels, String[] outcomeLabels) {
+      long[] predLabels, String[] outcomeLabels) {
     double[] aligned = new double[predLabels.length * outcomeLabels.length];
 
-    String[] sortedPredLabels = predLabels.clone();
+    long[] sortedPredLabels = predLabels.clone();
     String[] sortedOutcomeLabels =  outcomeLabels.clone();
     Arrays.sort(sortedPredLabels);
     Arrays.sort(sortedOutcomeLabels);
 
-    Map<String, Integer> invertedPredIndex = new HashMap<>();
+    Map<Long, Integer> invertedPredIndex = new HashMap<>();
     Map<String, Integer> invertedOutcomeIndex = new HashMap<>();
     for (int i = 0; i < predLabels.length; i++) {
       invertedPredIndex.put(predLabels[i], i);
@@ -204,15 +204,15 @@ public class NegLogLikelihoodTest {
   }
 
   private double[] dealignDoubleArrayForTestData(double[] expected,
-      String[] predLabels, String[] outcomeLabels) {
+      long[] predLabels, String[] outcomeLabels) {
     double[] dealigned = new double[predLabels.length * outcomeLabels.length];
 
-    String[] sortedPredLabels = predLabels.clone();
+    long[] sortedPredLabels = predLabels.clone();
     String[] sortedOutcomeLabels = outcomeLabels.clone();
     Arrays.sort(sortedPredLabels);
     Arrays.sort(sortedOutcomeLabels);
 
-    Map<String, Integer> invertedPredIndex = new HashMap<>();
+    Map<Long, Integer> invertedPredIndex = new HashMap<>();
     Map<String, Integer> invertedOutcomeIndex = new HashMap<>();
     for (int i = 0; i < predLabels.length; i++) {
       invertedPredIndex.put(predLabels[i], i);

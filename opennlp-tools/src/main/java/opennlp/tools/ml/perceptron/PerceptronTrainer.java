@@ -70,7 +70,7 @@ public class PerceptronTrainer extends AbstractEventTrainer {
   predicates as ints, and so this array is needed to save the model to
   disk and thereby allow users to know what the outcome was in human
   understandable terms. */
-  private String[] predLabels;
+  private long[] predLabels;
 
   private double tolerance = TOLERANCE_DEFAULT;
 

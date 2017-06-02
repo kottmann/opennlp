@@ -42,7 +42,7 @@ public class UniformPrior implements Prior {
     logPrior(dist,context,null);
   }
 
-  public void setLabels(String[] outcomeLabels, String[] contextLabels) {
+  public void setLabels(String[] outcomeLabels, long[] contextLabels) {
     this.numOutcomes = outcomeLabels.length;
     r = Math.log(1.0 / numOutcomes);
   }

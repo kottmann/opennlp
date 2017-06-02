@@ -50,7 +50,7 @@ public interface DataIndexer {
    * @return an array of predicate/context names indexed by context index.  These indices are the
    *     value of the array returned by <code>getContexts</code>.
    */
-  String[] getPredLabels();
+  long[] getPredLabels();
 
   /**
    * Returns an array of the count of each predicate in the events.

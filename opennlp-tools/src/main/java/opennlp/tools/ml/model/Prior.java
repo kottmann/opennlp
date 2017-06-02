@@ -56,5 +56,5 @@ public interface Prior {
    * @param outcomeLabels An array of each outcome label.
    * @param contextLabels An array of each context label.
    */
-  void setLabels(String[] outcomeLabels, String[] contextLabels);
+  void setLabels(String[] outcomeLabels, long[] contextLabels);
 }

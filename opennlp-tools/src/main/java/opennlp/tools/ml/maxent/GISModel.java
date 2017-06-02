@@ -40,7 +40,7 @@ public final class GISModel extends AbstractModel {
    * @param outcomeNames
    *          The names of the outcomes this model predicts.
    */
-  public GISModel(Context[] params, String[] predLabels, String[] outcomeNames) {
+  public GISModel(Context[] params, long[] predLabels, String[] outcomeNames) {
     this(params, predLabels, outcomeNames, new UniformPrior());
   }
 
@@ -57,7 +57,7 @@ public final class GISModel extends AbstractModel {
    * @param prior
    *          The prior to be used with this model.
    */
-  public GISModel(Context[] params, String[] predLabels, String[] outcomeNames, Prior prior) {
+  public GISModel(Context[] params, long[] predLabels, String[] outcomeNames, Prior prior) {
     super(params, predLabels, outcomeNames);
     this.prior = prior;
     prior.setLabels(outcomeNames, predLabels);
@@ -76,15 +76,15 @@ public final class GISModel extends AbstractModel {
    *         string representation of the outcomes can be obtained from the
    *         method getOutcome(int i).
    */
-  public final double[] eval(String[] context) {
+  public final double[] eval(long[] context) {
     return (eval(context, new double[evalParams.getNumOutcomes()]));
   }
 
-  public final double[] eval(String[] context, float[] values) {
+  public final double[] eval(long[] context, float[] values) {
     return (eval(context, values, new double[evalParams.getNumOutcomes()]));
   }
 
-  public final double[] eval(String[] context, double[] outsums) {
+  public final double[] eval(long[] context, double[] outsums) {
     return eval(context, null, outsums);
   }
 
@@ -102,7 +102,7 @@ public final class GISModel extends AbstractModel {
    *         string representation of the outcomes can be obtained from the
    *         method getOutcome(int i).
    */
-  public final double[] eval(String[] context, float[] values, double[] outsums) {
+  public final double[] eval(long[] context, float[] values, double[] outsums) {
     Context[] scontexts = new Context[context.length];
     for (int i = 0; i < context.length; i++) {
       scontexts[i] = pmap.get(context[i]);

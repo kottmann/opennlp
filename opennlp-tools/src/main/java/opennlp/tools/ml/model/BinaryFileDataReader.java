@@ -55,8 +55,12 @@ public class BinaryFileDataReader implements DataReader {
     return input.readInt();
   }
 
+  @Override
+  public long readLong() throws IOException {
+    return input.readLong();
+  }
+
   public String readUTF() throws IOException {
     return input.readUTF();
   }
-
 }

@@ -65,7 +65,7 @@ public class SimplePerceptronSequenceTrainer extends AbstractEventModelSequenceT
   private MutableContext[] averageParams;
 
   /** Mapping between context and an integer */
-  private Map<String, Integer> pmap;
+  private Map<Long, Integer> pmap;
 
   private Map<String,Integer> omap;
 
@@ -77,7 +77,7 @@ public class SimplePerceptronSequenceTrainer extends AbstractEventModelSequenceT
   private static final int ITER = 1;
   private static final int EVENT = 2;
 
-  private String[] predLabels;
+  private long[] predLabels;
   private int numSequences;
 
   public SimplePerceptronSequenceTrainer() {
@@ -192,7 +192,7 @@ public class SimplePerceptronSequenceTrainer extends AbstractEventModelSequenceT
     display("...done.\n");
 
     /* Create and return the model ****/
-    String[] updatedPredLabels = predLabels;
+    long[] updatedPredLabels = predLabels;
 
     if (useAverage) {
       return new PerceptronModel(averageParams, updatedPredLabels, outcomeLabels);
@@ -226,7 +226,7 @@ public class SimplePerceptronSequenceTrainer extends AbstractEventModelSequenceT
     int numCorrect = 0;
     int oei = 0;
     int si = 0;
-    List<Map<String,Float>> featureCounts = new ArrayList<>(numOutcomes);
+    List<Map<Long,Float>> featureCounts = new ArrayList<>(numOutcomes);
     for (int oi = 0; oi < numOutcomes; oi++) {
       featureCounts.add(new HashMap<>());
     }
@@ -256,7 +256,7 @@ public class SimplePerceptronSequenceTrainer extends AbstractEventModelSequenceT
         // {System.err.print(" "+events[ei].getOutcome());} System.err.println();
         //training feature count computation
         for (int ei = 0; ei < events.length; ei++, oei++) {
-          String[] contextStrings = events[ei].getContext();
+          long[] contextStrings = events[ei].getContext();
           float[] values = events[ei].getValues();
           int oi = omap.get(events[ei].getOutcome());
           for (int ci = 0; ci < contextStrings.length; ci++) {
@@ -278,7 +278,7 @@ public class SimplePerceptronSequenceTrainer extends AbstractEventModelSequenceT
         //System.err.print("test: ");for (int ei=0;ei<taggerEvents.length;ei++)
         // {System.err.print(" "+taggerEvents[ei].getOutcome());} System.err.println();
         for (Event taggerEvent : taggerEvents) {
-          String[] contextStrings = taggerEvent.getContext();
+          long[] contextStrings = taggerEvent.getContext();
           float[] values = taggerEvent.getValues();
           int oi = omap.get(taggerEvent.getOutcome());
           for (int ci = 0; ci < contextStrings.length; ci++) {
@@ -302,7 +302,7 @@ public class SimplePerceptronSequenceTrainer extends AbstractEventModelSequenceT
           }
         }
         for (int oi = 0; oi < numOutcomes; oi++) {
-          for (String feature : featureCounts.get(oi).keySet()) {
+          for (long feature : featureCounts.get(oi).keySet()) {
             int pi = pmap.get(feature);
             if (pi != -1) {
               //System.err.println(si+" "+outcomeLabels[oi]+" "+feature+" "+featureCounts[oi].get(feature));

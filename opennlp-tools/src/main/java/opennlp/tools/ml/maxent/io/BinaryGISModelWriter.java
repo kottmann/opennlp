@@ -75,6 +75,11 @@ public class BinaryGISModelWriter extends GISModelWriter {
     output.writeInt(i);
   }
 
+  public void writeLong(long i) throws java.io.IOException {
+    output.writeLong(i);
+  }
+
+
   public void writeDouble(double d) throws java.io.IOException {
     output.writeDouble(d);
   }

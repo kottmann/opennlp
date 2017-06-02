@@ -110,11 +110,11 @@ public abstract class AbstractModelReader {
     return outcomePatterns;
   }
 
-  protected String[] getPredicates() throws java.io.IOException {
+  protected long[] getPredicates() throws java.io.IOException {
     NUM_PREDS = readInt();
-    String[] predLabels = new String[NUM_PREDS];
+    long[] predLabels = new long[NUM_PREDS];
     for (int i = 0; i < NUM_PREDS; i++)
-        predLabels[i] = readUTF();
+        predLabels[i] = dataReader.readLong();
     return predLabels;
   }
 

@@ -19,14 +19,16 @@ package opennlp.tools.ml.model;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
+
+import com.carrotsearch.hppc.LongObjectHashMap;
+
+import opennlp.tools.ml.HashUtil;
 
 public abstract class AbstractModel implements MaxentModel {
 
   /** Mapping between predicates/contexts and an integer representing them. */
-  protected Map<String, Context> pmap;
+  protected LongObjectHashMap<Context> pmap;
   /** The names of the outcomes. */
   protected String[] outcomeNames;
   /** Parameters for the model. */
@@ -39,20 +41,20 @@ public abstract class AbstractModel implements MaxentModel {
   /** The type of the model. */
   protected ModelType modelType;
 
-  protected AbstractModel(Context[] params, String[] predLabels,
-      Map<String, Context> pmap, String[] outcomeNames) {
+  protected AbstractModel(Context[] params, long[] predLabels,
+                          LongObjectHashMap<Context> pmap, String[] outcomeNames) {
     this.pmap = pmap;
     this.outcomeNames =  outcomeNames;
     this.evalParams = new EvalParameters(params,outcomeNames.length);
   }
 
-  public AbstractModel(Context[] params, String[] predLabels, String[] outcomeNames) {
+  public AbstractModel(Context[] params, long[] predLabels, String[] outcomeNames) {
     init(predLabels, params, outcomeNames);
     this.evalParams = new EvalParameters(params, outcomeNames.length);
   }
 
-  private void init(String[] predLabels, Context[] params, String[] outcomeNames) {
-    this.pmap = new HashMap<>(predLabels.length);
+  private void init(long[] predLabels, Context[] params, String[] outcomeNames) {
+    this.pmap = new LongObjectHashMap<>(predLabels.length);
 
     for (int i = 0; i < predLabels.length; i++) {
       pmap.put(predLabels[i], params[i]);
@@ -61,6 +63,10 @@ public abstract class AbstractModel implements MaxentModel {
     this.outcomeNames =  outcomeNames;
   }
 
+  @Override
+  public double[] eval(String[] context) {
+    return eval(HashUtil.hash(context));
+  }
 
   /**
    * Return the name of the outcome corresponding to the highest likelihood
