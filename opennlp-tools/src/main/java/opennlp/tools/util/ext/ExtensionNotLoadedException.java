@@ -24,26 +24,23 @@ public class ExtensionNotLoadedException extends RuntimeException {
 
   private static final long serialVersionUID = 1L;
 
-  private final boolean isOSGiEnvironment;
-
   public ExtensionNotLoadedException(String message) {
     super(message);
-
-    isOSGiEnvironment = ExtensionLoader.isOSGiAvailable();
   }
 
   public ExtensionNotLoadedException(Throwable t) {
     super(t);
-
-    isOSGiEnvironment = ExtensionLoader.isOSGiAvailable();
   }
 
   /**
    * Indicates if OpenNLP is running in an OSGi environment or not.
    *
    * @return true if running in an OSGi environment
+   *
+   * @deprecated will be removed, osgi support was removed
    */
+  @Deprecated
   public boolean isOSGiEnvironment() {
-    return isOSGiEnvironment;
+    return false;
   }
 }
