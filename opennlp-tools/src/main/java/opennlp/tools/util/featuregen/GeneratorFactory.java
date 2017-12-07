@@ -245,15 +245,12 @@ public class GeneratorFactory {
 
       String dictResourceKey = generatorElement.getAttribute("dict");
 
-      Object dictResource = resourceManager.getResource(dictResourceKey);
-
-      if (!(dictResource instanceof Dictionary)) {
-        throw new InvalidFormatException("No dictionary resource for key: " + dictResourceKey);
-      }
+      Dictionary dictResource = resourceManager.getResource(dictResourceKey, Dictionary.class,
+          new DictionarySerializer());
 
       String prefix = generatorElement.getAttribute("prefix");
 
-      return new DictionaryFeatureGenerator(prefix, (Dictionary) dictResource);
+      return new DictionaryFeatureGenerator(prefix, dictResource);
     }
 
     static void register(Map<String, XmlFeatureGeneratorFactory> factoryMap) {
@@ -286,16 +283,10 @@ public class GeneratorFactory {
       String dictResourceKey = generatorElement.getAttribute("dict");
       boolean lowerCaseDictionary = "true".equals(generatorElement.getAttribute("lowerCase"));
 
-      Object dictResource = resourceManager.getResource(dictResourceKey);
+      WordClusterDictionary dictResource = resourceManager.getResource(dictResourceKey,
+          WordClusterDictionary.class, new WordClusterDictionary.WordClusterDictionarySerializer());
 
-
-      if (!(dictResource instanceof WordClusterDictionary)) {
-        throw new InvalidFormatException("Not a WordClusterDictionary resource for key: "
-            + dictResourceKey);
-      }
-
-      return new WordClusterFeatureGenerator((WordClusterDictionary) dictResource,
-          dictResourceKey, lowerCaseDictionary);
+      return new WordClusterFeatureGenerator(dictResource, dictResourceKey, lowerCaseDictionary);
     }
 
     static void register(Map<String, XmlFeatureGeneratorFactory> factoryMap) {
@@ -313,14 +304,10 @@ public class GeneratorFactory {
 
       String dictResourceKey = generatorElement.getAttribute("dict");
 
-      Object dictResource = resourceManager.getResource(dictResourceKey);
+      BrownCluster dictResource = resourceManager.getResource(dictResourceKey, BrownCluster.class,
+          new BrownCluster.BrownClusterSerializer());
 
-
-      if (!(dictResource instanceof BrownCluster)) {
-        throw new InvalidFormatException("Not a BrownLexicon resource for key: " + dictResourceKey);
-      }
-
-      return new BrownTokenFeatureGenerator((BrownCluster) dictResource);
+      return new BrownTokenFeatureGenerator(dictResource);
     }
 
     static void register(Map<String, XmlFeatureGeneratorFactory> factoryMap) {
@@ -338,14 +325,10 @@ public class GeneratorFactory {
 
       String dictResourceKey = generatorElement.getAttribute("dict");
 
-      Object dictResource = resourceManager.getResource(dictResourceKey);
+      BrownCluster dictResource = resourceManager.getResource(dictResourceKey, BrownCluster.class,
+          new BrownCluster.BrownClusterSerializer());
 
-
-      if (!(dictResource instanceof BrownCluster)) {
-        throw new InvalidFormatException("Not a BrownLexicon resource for key: " + dictResourceKey);
-      }
-
-      return new BrownTokenClassFeatureGenerator((BrownCluster) dictResource);
+      return new BrownTokenClassFeatureGenerator(dictResource);
     }
 
     static void register(Map<String, XmlFeatureGeneratorFactory> factoryMap) {
@@ -363,14 +346,10 @@ public class GeneratorFactory {
 
       String dictResourceKey = generatorElement.getAttribute("dict");
 
-      Object dictResource = resourceManager.getResource(dictResourceKey);
+      BrownCluster dictResource = resourceManager.getResource(dictResourceKey, BrownCluster.class,
+          new BrownCluster.BrownClusterSerializer());
 
-
-      if (!(dictResource instanceof BrownCluster)) {
-        throw new InvalidFormatException("Not a BrownLexicon resource for key: " + dictResourceKey);
-      }
-
-      return new BrownBigramFeatureGenerator((BrownCluster) dictResource);
+      return new BrownBigramFeatureGenerator(dictResource);
     }
 
     static void register(Map<String, XmlFeatureGeneratorFactory> factoryMap) {
@@ -622,7 +601,8 @@ public class GeneratorFactory {
 
       String modelResourceKey = generatorElement.getAttribute("model");
 
-      POSModel model = (POSModel)resourceManager.getResource(modelResourceKey);
+      POSModel model = resourceManager.getResource(modelResourceKey, POSModel.class,
+          new POSModelSerializer());
 
       return new POSTaggerNameFeatureGenerator(model);
 
@@ -775,6 +755,7 @@ public class GeneratorFactory {
     return createGenerator(generatorElement, resourceManager);
   }
 
+  @Deprecated // will be removed with 1.9
   public static Map<String, ArtifactSerializer<?>> extractArtifactSerializerMappings(
       InputStream xmlDescriptorIn) throws IOException {
 

@@ -18,6 +18,8 @@
 
 package opennlp.tools.util.featuregen;
 
+import opennlp.tools.util.model.ArtifactSerializer;
+
 /**
  * The {@link FeatureGeneratorResourceProvider} provides access to the resources
  * provided in the model. Inside the model resources are identified by a
@@ -33,8 +35,22 @@ public interface FeatureGeneratorResourceProvider {
    * Retrieves the resource object for the given name/identifier.
    *
    * @param resourceIdentifier the identifier which names the resource.
+   * @param type the type of the requested resource
+   * @param serializer
    *
    * @return the resource object
    */
-  Object getResource(String resourceIdentifier);
+  default <T> T getResource(String resourceIdentifier, Class<T> type, ArtifactSerializer serializer) {
+    return (T) getResourced(resourceIdentifier);
+  }
+
+  /**
+   * Retrieves the resource object for the given name/identifier.
+   *
+   * @param resourceIdentifier the identifier which names the resource.
+   *
+   * @return the resource object
+   */
+  @Deprecated
+  Object getResourced(String resourceIdentifier);
 }

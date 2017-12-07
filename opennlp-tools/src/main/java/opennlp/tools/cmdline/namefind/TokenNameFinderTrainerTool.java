@@ -85,6 +85,7 @@ public final class TokenNameFinderTrainerTool
    * @param featureGenDescriptor the feature xml descriptor
    * @return a map consisting of the file name of the resource and its corresponding Object
    */
+  // TODO: Here a Feature Generator Resource Provider must be created instead of the map
   public static Map<String, Object> loadResources(File resourcePath, File featureGenDescriptor)
       throws IOException {
     Map<String, Object> resources = new HashMap<>();
